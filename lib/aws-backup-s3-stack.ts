@@ -32,7 +32,7 @@ export class AwsBackupS3Stack extends Stack {
     const vault = new aws_backup.BackupVault(this, "Vault", {});
     const plan = aws_backup.BackupPlan.daily35DayRetention(
       this,
-      "demo-backup-plan",
+      "s3-bucket-backup-plan",
       vault
     );
 
