@@ -38,7 +38,7 @@ export class AwsBackupS3Stack extends Stack {
 
     plan.addSelection("Selection", {
       role: backupRole,
-      resources: [aws_backup.BackupResource.fromTag("daily-backup", "true")],
+      resources: [aws_backup.BackupResource.fromArn(bucket.bucketArn)],
     });
   }
 
