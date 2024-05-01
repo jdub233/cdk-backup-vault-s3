@@ -3,7 +3,6 @@ import {
   aws_s3,
   Stack,
   StackProps,
-  Tags,
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
 
@@ -25,7 +24,6 @@ export class AwsBackupS3Stack extends Stack {
       encryption: aws_s3.BucketEncryption.S3_MANAGED,
       versioned: true,
     });
-    Tags.of(bucket).add("daily-backup", "true");
 
     // Create the backup role.
     const backupRole = createBackupRole(this);
