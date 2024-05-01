@@ -27,9 +27,10 @@ export class AwsBackupS3Stack extends Stack {
     });
     Tags.of(bucket).add("daily-backup", "true");
 
+    // Create the backup role.
     const backupRole = createBackupRole(this);
 
-    // Daily 35 day retention
+    // Daily 35 day retention with automatically scheduled backup.
     const vault = new aws_backup.BackupVault(this, "Vault", {});
     const plan = aws_backup.BackupPlan.daily35DayRetention(
       this,
@@ -37,6 +38,7 @@ export class AwsBackupS3Stack extends Stack {
       vault
     );
 
+    // Add the s3 bucket as a resource to be backed up to the backup plan.
     plan.addSelection("Selection", {
       role: backupRole,
       resources: [aws_backup.BackupResource.fromArn(bucket.bucketArn)],
