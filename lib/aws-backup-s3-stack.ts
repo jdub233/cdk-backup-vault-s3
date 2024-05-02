@@ -3,35 +3,35 @@ import {
   aws_s3,
   Stack,
   StackProps,
-  Tags,
 } from "aws-cdk-lib";
 import { Construct } from "constructs";
+import { config } from 'dotenv';
 
 import { createBackupRole } from "./backup-role";
+import { createBucket } from "./s3-bucket";
+
+config();
 
 export class AwsBackupS3Stack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const bucket = new aws_s3.Bucket(this, "testBucket", {
-      blockPublicAccess: {
-        blockPublicAcls: true,
-        blockPublicPolicy: true,
-        ignorePublicAcls: true,
-        restrictPublicBuckets: true,
-      },
-      enforceSSL: true,
-      publicReadAccess: false,
-      encryption: aws_s3.BucketEncryption.S3_MANAGED,
-      versioned: true,
-    });
-    Tags.of(bucket).add("daily-backup", "true");
+    // Get the bucket ARN from the environment variables, or use a default null value.
+    const bucketArn = process.env.BUCKET_ARN || null;
+
+
+    // If there is a valid bucket arn, use that bucket as resource to be backed up.
+    const bucket: aws_s3.IBucket = bucketArn
+      ? aws_s3.Bucket.fromBucketArn(this, "testBucket", bucketArn)
+      : createBucket(this, "testBucket");     // Otherwise, create a new 'test' bucket to use with the backup vault.
 
     // Create the backup role.
     const backupRole = createBackupRole(this);
 
-    // Daily 35 day retention with automatically scheduled backup.
+    // Create the vault.
     const vault = new aws_backup.BackupVault(this, "Vault", {});
+
+    // Add a predefined plan with a daily 35 day retention.
     const plan = aws_backup.BackupPlan.daily35DayRetention(
       this,
       "s3-bucket-backup-plan",
