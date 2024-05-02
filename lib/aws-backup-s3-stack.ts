@@ -8,24 +8,9 @@ import { Construct } from "constructs";
 import { config } from 'dotenv';
 
 import { createBackupRole } from "./backup-role";
+import { createBucket } from "./s3-bucket";
 
 config();
-
-function createBucket(scope: Construct, id: string): aws_s3.Bucket {
-  return new aws_s3.Bucket(scope, id, {
-    blockPublicAccess: {
-      blockPublicAcls: true,
-      blockPublicPolicy: true,
-      ignorePublicAcls: true,
-      restrictPublicBuckets: true,
-    },
-    enforceSSL: true,
-    publicReadAccess: false,
-    encryption: aws_s3.BucketEncryption.S3_MANAGED,
-    versioned: true,
-  });
-}
-
 
 export class AwsBackupS3Stack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
