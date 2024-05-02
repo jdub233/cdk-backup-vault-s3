@@ -1,4 +1,4 @@
-AWS Backup for S3 Using Tags
+AWS Backup for single S3 bucket
 ---
 
 <!--BEGIN STABILITY BANNER-->
@@ -14,8 +14,15 @@ AWS Backup for S3 Using Tags
 
 ## Overview
 
-CDK example to create a AWS Backup Vault and backup an S3 bucket which has Resource Tags assigned to it.
+This is a CDK stack to create a AWS Backup Vault and backup an entire S3 bucket. It is based on the [example CDK stack provided by AWS](https://github.com/aws-samples/aws-cdk-examples).
 
+It can be used to create a backup stack for an existing S3 bucket; the bucket can be specified by putting the ARN of the bucket into a `.env` file like this:
+
+```env
+BUCKET_ARN=arn:aws:s3:::wordpress-protected-s3-assets-jaydub-assets
+```
+
+If there is no BUCKET_ARN specified, the stack will deploy with a new bucket based on the stack name. This feature can be useful for testing.
 
 Once deployed, any uploaded object in the bucket created will be backed up once the backup schedule is executed.
 
